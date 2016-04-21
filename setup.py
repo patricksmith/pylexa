@@ -6,12 +6,12 @@ def read(fname):
 
 setup(
     name = 'pylexa',
-    version = '0.0.1',
+    version = '0.0.2',
     author = 'Patrick Smith',
     author_email = 'pjs482@gmail.com',
     description = ('A library to ease creation of an Alexa Skills Kit'),
     keywords = 'amazon alexa ask',
-    url = 'http://www.promptworks.com',
+    url = 'http://www.github.com/patricksmith/pylexa',
     packages=['pylexa'],
     install_requires=['flask'],
     long_description=read('README.md'),

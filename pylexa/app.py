@@ -3,7 +3,7 @@ from flask import Blueprint, request as flask_request
 
 from pylexa.intent import intents
 from pylexa.request import IntentRequest, LaunchRequest, SessionEndedRequest, Request
-from pylexa.response import PlainTextResponse
+from pylexa.response import PlainTextSpeech
 
 
 alexa_blueprint = Blueprint('alexa', __name__)
@@ -28,8 +28,8 @@ def handle_request():
         if request.intent in intents:
             return intents[request.intent](request)
         else:
-            return PlainTextResponse("I'm sorry I didn't understand that")
+            return PlainTextSpeech("I'm sorry I didn't understand that")
     elif request.is_launch:
-        return PlainTextResponse('Launching')
+        return PlainTextSpeech('Launching')
     else:
-        return PlainTextResponse('¯\_(ツ)_/¯')
+        return PlainTextSpeech('¯\_(ツ)_/¯')
