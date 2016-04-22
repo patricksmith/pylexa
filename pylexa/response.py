@@ -23,6 +23,9 @@ class Card(object):
             **self.get_properties()
         )
 
+    def get_properties(self):
+        return {}
+
 
 class SimpleCard(Card):
 
