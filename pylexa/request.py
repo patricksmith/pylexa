@@ -16,8 +16,12 @@ class Request(object):
         return self.request.get('timestamp')
 
     @property
-    def requestId(self):
+    def request_id(self):
         return self.request.get('requestId')
+
+    @property
+    def access_token(self):
+        return self.request.get('user', {}).get('accessToken')
 
 
 class LaunchRequest(Request):
