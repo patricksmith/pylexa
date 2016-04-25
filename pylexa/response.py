@@ -112,7 +112,7 @@ class Response(object):
     version = '1.0'
     output_speech = {}
 
-    def __init__(self, speech=None, card=None, should_end_session=False):
+    def __init__(self, speech=None, card=None, should_end_session=True):
         self.speech = speech
         self.card = card
         self.should_end_session = should_end_session
