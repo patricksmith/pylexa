@@ -44,7 +44,7 @@ class IntentRequest(Request):
         slots = self.request.get('intent', {}).get('slots', {})
         return {
             slot['name']: slot['value']
-            for slot in slots.values()
+            for slot in slots.values() if 'value' in slot
         }
 
 

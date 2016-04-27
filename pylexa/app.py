@@ -22,7 +22,6 @@ def make_request_obj(flask_request):
 
 @alexa_blueprint.route('/', methods=['POST'])
 def handle_request():
-    print flask_request.json
     request = make_request_obj(flask_request)
     if request.is_intent:
         if request.intent in intents:
