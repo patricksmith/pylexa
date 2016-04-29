@@ -84,6 +84,12 @@ class OutputSpeech(object):
             **self.get_properties()
         )
 
+    def __eq__(self, other):
+        return (
+            self.type_ == other.type_ and
+            self.get_properties() == other.get_properties()
+        )
+
 
 class PlainTextSpeech(OutputSpeech):
 
