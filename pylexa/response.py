@@ -2,7 +2,7 @@
 from flask import Response as BaseResponse, jsonify
 
 
-class AlexaResponse(BaseResponse):
+class AlexaResponseWrapper(BaseResponse):
 
     @classmethod
     def force_type(cls, rv, environ=None):
@@ -10,7 +10,7 @@ class AlexaResponse(BaseResponse):
             rv = Response(speech=rv)
         if isinstance(rv, Response):
             rv = jsonify(rv.as_dict())
-        return super(AlexaResponse, cls).force_type(rv, environ)
+        return super(AlexaResponseWrapper, cls).force_type(rv, environ)
 
 
 class Card(object):

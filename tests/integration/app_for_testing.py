@@ -2,7 +2,7 @@ from flask import Flask
 
 from pylexa.app import alexa_blueprint, handle_launch_request, handle_session_ended_request
 from pylexa.intent import handle_intent
-from pylexa.response import AlexaResponse, LinkAccountCard, PlainTextSpeech, Response
+from pylexa.response import AlexaResponseWrapper, LinkAccountCard, PlainTextSpeech, Response
 
 
 @handle_launch_request
@@ -30,4 +30,4 @@ def handle_auth_intent(request):
 
 app = Flask(__name__)
 app.register_blueprint(alexa_blueprint)
-app.response_class = AlexaResponse
+app.response_class = AlexaResponseWrapper
