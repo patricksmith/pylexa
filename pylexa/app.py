@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, request as flask_request
+from flask import Blueprint, current_app, jsonify, request as flask_request
 
 from pylexa.default_handlers import (
     default_launch_handler,
     default_session_ended_handler,
     default_unrecognized_intent_handler
 )
+from pylexa.exceptions import InvalidRequest
 from pylexa.intent import intents
 from pylexa.request import IntentRequest, LaunchRequest, SessionEndedRequest, Request
 from pylexa.response import PlainTextSpeech
+from pylexa.verify import verify_request
 
 
 alexa_blueprint = Blueprint('alexa', __name__)
 alexa_blueprint.launch_handler = default_launch_handler
 alexa_blueprint.session_ended_handler = default_session_ended_handler
+alexa_blueprint.force_verification = False
 
 
 def make_request_obj():
@@ -37,8 +40,18 @@ def handle_session_ended_request(func):
     return func
 
 
+@alexa_blueprint.errorhandler(InvalidRequest)
+def handle_invalid_request(error):
+    response = jsonify({'error': error.message})
+    response.status_code = 400
+    return response
+
+
 @alexa_blueprint.route('/', methods=['POST'])
 def route_request():
+    if not current_app.debug or alexa_blueprint.force_verification:
+        verify_request()
+
     request = make_request_obj()
     if request.is_intent:
         if request.intent in intents:

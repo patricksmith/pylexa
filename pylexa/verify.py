@@ -9,6 +9,7 @@ from Crypto.Util.asn1 import DerSequence
 from dateutil import parser, tz
 from flask import request
 from OpenSSL import crypto
+import requests
 
 from pylexa.exceptions import InvalidRequest
 
@@ -41,15 +42,13 @@ def is_within_time_tolerance():
 
 
 def verify_signature():
-
-    with open('echo-api-cert-3.pem', 'rt') as f:
-        st_cert = f.read()
-    cert = crypto.load_certificate(crypto.FILETYPE_PEM, st_cert)
-    pubkey = cert.get_pubkey()
-
     headers = request.headers
     if 'signature' not in headers:
         return False
+
+    st_cert = requests.get(headers.get('SignatureCertChainUrl')).text
+    cert = crypto.load_certificate(crypto.FILETYPE_PEM, st_cert)
+    pubkey = cert.get_pubkey()
 
     encoded_signature = headers.get('signature')
     decoded_signature = base64.decodestring(encoded_signature)
@@ -71,5 +70,8 @@ def verify_request():
         raise InvalidRequest('Cert chain URL not valid.')
     if not is_within_time_tolerance():
         raise InvalidRequest('Request timestamp too old')
-    if not verify_signature():
-        raise InvalidRequest('Could not verify request signature')
+    try:
+        if not verify_signature():
+            raise InvalidRequest('Could not verify request signature')
+    except Exception:
+        raise InvalidRequest('Unknown error verifying request signature')
