@@ -1,3 +1,6 @@
 flask
 mock
 nose
+pycrypto
+pyopenssl
+python-dateutil
