@@ -14,6 +14,9 @@ import requests
 from pylexa.exceptions import InvalidRequest
 
 
+DOWNLOADED_CERTS = {}
+
+
 def is_cert_chain_url_valid():
     url = request.headers.get('SignatureCertChainUrl')
     if not url:
@@ -46,9 +49,14 @@ def verify_signature():
     if 'signature' not in headers:
         return False
 
-    st_cert = requests.get(headers.get('SignatureCertChainUrl')).text
-    cert = crypto.load_certificate(crypto.FILETYPE_PEM, st_cert)
-    pubkey = cert.get_pubkey()
+    cert_url = headers.get('SignatureCertChainUrl')
+    pubkey = DOWNLOADED_CERTS.get(cert_url)
+    if not pubkey:
+        print 'downloading cert at', cert_url
+        st_cert = requests.get(headers.get('SignatureCertChainUrl')).text
+        cert = crypto.load_certificate(crypto.FILETYPE_PEM, st_cert)
+        pubkey = cert.get_pubkey()
+        DOWNLOADED_CERTS[cert_url] = pubkey
 
     encoded_signature = headers.get('signature')
     decoded_signature = base64.decodestring(encoded_signature)
