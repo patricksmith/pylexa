@@ -99,10 +99,39 @@ class TestRouteRequest(unittest.TestCase):
         self.intents_patcher = mock.patch('pylexa.app.intents', new=self.intents)
         self.intents_patcher.start()
 
+        self.current_app_patcher = mock.patch('pylexa.app.current_app')
+        self.current_app = self.current_app_patcher.start()
+
+        self.verify_request_patcher = mock.patch('pylexa.app.verify_request')
+        self.verify_request = self.verify_request_patcher.start()
+
     def tearDown(self):
         self.make_request_obj_patcher.stop()
         self.blueprint_patcher.stop()
         self.intents_patcher.stop()
+        self.current_app_patcher.stop()
+        self.verify_request_patcher.stop()
+
+    def should_call_verify_request_when_not_in_debug_mode(self):
+        self.current_app.debug = False
+        self.blueprint_mock.force_verification = False
+        self.request.is_launch = True
+        route_request()
+        self.verify_request.assert_called_once()
+
+    def should_call_verify_request_when_force_verification_true(self):
+        self.current_app.debug = True
+        self.blueprint_mock.force_verification = True
+        self.request.is_launch = True
+        route_request()
+        self.verify_request.assert_called_once()
+
+    def should_not_verify_request_when_debug_and_no_force_verification(self):
+        self.current_app.debug = True
+        self.blueprint_mock.force_verification = False
+        self.request.is_launch = True
+        route_request()
+        self.assertFalse(self.verify_request.called)
 
     def should_call_launch_handler_for_launch_request(self):
         self.request.is_launch = True

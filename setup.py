@@ -13,7 +13,7 @@ setup(
     keywords = 'amazon alexa ask',
     url = 'http://www.github.com/patricksmith/pylexa',
     packages=['pylexa'],
-    install_requires=['flask'],
+    install_requires=['flask', 'python-dateutil', 'pycrypto', 'pyopenssl'],
     long_description=read('README.md'),
     classifiers=[
         'Development Status :: 3 - Alpha',

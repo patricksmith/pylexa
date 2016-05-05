@@ -4,6 +4,9 @@ import unittest
 from app_for_testing import app
 
 
+app.debug = True
+
+
 EXAMPLE_REQUEST = {
     'request': {
         'locale': 'en-US',
