@@ -17,8 +17,7 @@ from pylexa.exceptions import InvalidRequest
 DOWNLOADED_CERTS = {}
 
 
-def is_cert_chain_url_valid():
-    url = request.headers.get('SignatureCertChainUrl')
+def is_cert_chain_url_valid(url):
     if not url:
         return False
     parsed_url = urlparse(url)
@@ -33,53 +32,58 @@ def is_cert_chain_url_valid():
     return True
 
 
-def is_within_time_tolerance():
-    timestamp = request.json.get('request', {}).get('timestamp')
+def is_within_time_tolerance(timestamp):
     tolerance = 150
     try:
         request_time = parser.parse(timestamp)
-    except (AttributeError, ValueError):
+    except (AttributeError, ValueError) as ex:
         return False
     now = datetime.now(tz.tzutc())
     return now - request_time < timedelta(seconds=tolerance)
 
 
-def verify_signature():
-    headers = request.headers
-    if 'signature' not in headers:
-        return False
+def get_pubkey_from_cert(cert_chain_url):
+    if cert_chain_url in DOWNLOADED_CERTS:
+        return DOWNLOADED_CERTS[cert_chain_url]
 
-    cert_url = headers.get('SignatureCertChainUrl')
-    pubkey = DOWNLOADED_CERTS.get(cert_url)
-    if not pubkey:
-        print 'downloading cert at', cert_url
-        st_cert = requests.get(headers.get('SignatureCertChainUrl')).text
-        cert = crypto.load_certificate(crypto.FILETYPE_PEM, st_cert)
-        pubkey = cert.get_pubkey()
-        DOWNLOADED_CERTS[cert_url] = pubkey
+    st_cert = requests.get(cert_chain_url).text
+    cert = crypto.load_certificate(crypto.FILETYPE_PEM, st_cert)
+    pubkey = cert.get_pubkey()
+    DOWNLOADED_CERTS[cert_chain_url] = pubkey
+    return pubkey
 
-    encoded_signature = headers.get('signature')
-    decoded_signature = base64.decodestring(encoded_signature)
 
+def get_verifier(pubkey):
     src = crypto.dump_privatekey(crypto.FILETYPE_ASN1, pubkey)
     pub_der = DerSequence()
     pub_der.decode(src)
     key = RSA.construct((long(pub_der._seq[1]), long(pub_der._seq[2])))
+    return PKCS1_v1_5.new(key)
 
-    request_body = request.get_data()
-    h = SHA.new(request_body)
 
-    verifier = PKCS1_v1_5.new(key)
-    return verifier.verify(h, decoded_signature)
+def verify_signature(signature, cert_chain_url, request_body):
+    pubkey = get_pubkey_from_cert(cert_chain_url)
+    verifier = get_verifier(pubkey)
+
+    decoded_signature = base64.decodestring(signature)
+
+    request_hash = SHA.new(request_body)
+    return verifier.verify(request_hash, decoded_signature)
 
 
 def verify_request():
-    if not is_cert_chain_url_valid():
+    cert_chain_url = request.headers.get('SignatureCertChainUrl')
+    if not is_cert_chain_url_valid(cert_chain_url):
         raise InvalidRequest('Cert chain URL not valid.')
-    if not is_within_time_tolerance():
+
+    timestamp = request.json.get('request', {}).get('timestamp')
+    if not is_within_time_tolerance(timestamp):
         raise InvalidRequest('Request timestamp too old')
+
     try:
-        if not verify_signature():
+        signature = request.headers.get('Signature')
+        request_body = request.get_data()
+        if not signature or not verify_signature(signature, cert_chain_url, request_body):
             raise InvalidRequest('Could not verify request signature')
-    except Exception:
-        raise InvalidRequest('Unknown error verifying request signature')
+    except Exception as ex:
+        raise InvalidRequest('Could not verify request signature')
