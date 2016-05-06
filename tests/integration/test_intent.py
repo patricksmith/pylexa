@@ -55,7 +55,8 @@ class TestEchoIntentWithoutValue(unittest.TestCase):
                         'text': 'Nothing to echo'
                     },
                     'shouldEndSession': True
-                }
+                },
+                'sessionAttributes': None,
             })
 
 
@@ -76,7 +77,8 @@ class TestEchoIntentWithValue(unittest.TestCase):
                         'text': 'echo me'
                     },
                     'shouldEndSession': True
-                }
+                },
+                'sessionAttributes': None,
             })
 
 
@@ -125,5 +127,6 @@ class TestAuthIntent(unittest.TestCase):
                         'type': 'LinkAccount'
                     },
                     'shouldEndSession': True
-                }
+                },
+                'sessionAttributes': None,
             })
