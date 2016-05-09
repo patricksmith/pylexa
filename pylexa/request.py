@@ -27,7 +27,7 @@ class Request(object):
 
     @property
     def session(self):
-        return self._session.get('attributes', {})
+        return self._session.get('attributes', {}) or {}
 
 
 class LaunchRequest(Request):
