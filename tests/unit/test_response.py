@@ -77,10 +77,14 @@ class _BaseResponseTestCase(unittest.TestCase):
 
     speech = None
     card = None
+    reprompt = None
+    session = None
     should_end_session = True
 
     def should_return_expected_dict(self):
-        response = Response(self.speech, self.card, self.should_end_session)
+        response = Response(
+            speech=self.speech, card=self.card, reprompt=self.reprompt,
+            session=self.session, should_end_session=self.should_end_session)
         self.assertEqual(response.as_dict(), self.expected_output)
 
 
@@ -90,7 +94,8 @@ class TestDefaultResponse(_BaseResponseTestCase):
         'version': '1.0',
         'response': {
             'shouldEndSession': True
-        }
+        },
+        'sessionAttributes': None,
     }
 
 class TestResponseWithSpeech(_BaseResponseTestCase):
@@ -104,7 +109,8 @@ class TestResponseWithSpeech(_BaseResponseTestCase):
                 'type': 'PlainText',
                 'text': 'This is some text'
             }
-        }
+        },
+        'sessionAttributes': None,
     }
 
 
@@ -120,7 +126,8 @@ class TestResponseWithCard(_BaseResponseTestCase):
                 'title': 'Card title',
                 'content': 'Card content'
             }
-        }
+        },
+        'sessionAttributes': None,
     }
 
 
@@ -140,9 +147,23 @@ class TestResponseWithSpeechAndCard(_BaseResponseTestCase):
                 'type': 'PlainText',
                 'text': 'This is some text'
             }
-        }
+        },
+        'sessionAttributes': None,
     }
 
+
+class TestResponseWithSession(_BaseResponseTestCase):
+
+    session = { 'foo': 'bar' }
+    expected_output = {
+        'version': '1.0',
+        'response': {
+            'shouldEndSession': True
+        },
+        'sessionAttributes': {
+            'foo': 'bar'
+        }
+    }
 
 class TestResponseWithShouldEndSession(_BaseResponseTestCase):
 
@@ -151,5 +172,6 @@ class TestResponseWithShouldEndSession(_BaseResponseTestCase):
         'version': '1.0',
         'response': {
             'shouldEndSession': False
-        }
+        },
+        'sessionAttributes': None,
     }

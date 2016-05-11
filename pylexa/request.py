@@ -1,13 +1,13 @@
 class Request(object):
     request = {}
-    session = {}
+    _session = {}
     is_intent = False
     is_launch = False
     is_session_ended = False
 
     def __init__(self, request):
         self.request = request.json.get('request', {})
-        self.session = request.json.get('session', {})
+        self._session = request.json.get('session', {})
 
     @property
     def type(self):
@@ -23,7 +23,11 @@ class Request(object):
 
     @property
     def access_token(self):
-        return self.session.get('user', {}).get('accessToken')
+        return self._session.get('user', {}).get('accessToken')
+
+    @property
+    def session(self):
+        return self._session.get('attributes', {}) or {}
 
 
 class LaunchRequest(Request):

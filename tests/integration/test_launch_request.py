@@ -42,6 +42,7 @@ class TestLaunchRequest(unittest.TestCase):
                         'text': 'This is my launch handler'
                     },
                     'shouldEndSession': True
-                }
+                },
+                'sessionAttributes': None,
             })
 

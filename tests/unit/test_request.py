@@ -22,6 +22,7 @@ class TestRequestClass(unittest.TestCase):
                 'user': {
                     'accessToken': self.access_token,
                 },
+                'attributes': None
             },
         })
 
@@ -43,6 +44,9 @@ class TestRequestClass(unittest.TestCase):
         self.assertFalse(self.request.is_intent)
         self.assertFalse(self.request.is_launch)
         self.assertFalse(self.request.is_session_ended)
+
+    def should_return_emtpy_dict_for_session(self):
+        self.assertEqual(self.request.session, {})
 
 
 class TestLaunchRequest(unittest.TestCase):

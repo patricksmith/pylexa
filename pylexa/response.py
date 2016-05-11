@@ -118,9 +118,11 @@ class Response(object):
     version = '1.0'
     output_speech = {}
 
-    def __init__(self, speech=None, card=None, should_end_session=True):
+    def __init__(self, speech=None, card=None, reprompt=None, session=None, should_end_session=True):
         self.speech = speech
         self.card = card
+        self.reprompt = reprompt
+        self.session = session
         self.should_end_session = should_end_session
 
     def as_dict(self):
@@ -131,7 +133,13 @@ class Response(object):
             response['outputSpeech'] = self.speech.as_dict()
         if self.card:
             response['card'] = self.card.as_dict()
+        if self.reprompt:
+            response['reprompt'] = {
+                'outputSpeech': self.reprompt.as_dict()
+            }
+
         return {
             'version': self.version,
-            'response': response
+            'response': response,
+            'sessionAttributes': self.session,
         }

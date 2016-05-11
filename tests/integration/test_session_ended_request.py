@@ -45,7 +45,8 @@ class TestSessionEndedRequest(unittest.TestCase):
                         'text': 'Later, alligator'
                     },
                     'shouldEndSession': True
-                }
+                },
+                'sessionAttributes': None,
             })
 
 
