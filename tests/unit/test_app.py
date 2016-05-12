@@ -10,7 +10,9 @@ from pylexa.app import (
     handle_session_ended_request,
     make_request_obj,
     route_request,
+    validate_request,
 )
+from pylexa.exceptions import InvalidRequest
 from pylexa.request import IntentRequest, LaunchRequest, SessionEndedRequest, Request
 
 
@@ -84,6 +86,74 @@ class TestHandleSessionEndedRequestDecorator(unittest.TestCase):
         self.assertEqual(self.blueprint_mock.session_ended_handler, my_handler)
 
 
+class TestValidateRequest(unittest.TestCase):
+
+    def setUp(self):
+        self.request_patcher = mock.patch('pylexa.app.flask_request')
+        self.request = self.request_patcher.start()
+        self.app_id = 'app_id'
+        self.request.json = {
+            'session': {
+                'application': {
+                    'applicationId': self.app_id
+                }
+            }
+        }
+
+        self.blueprint_patcher = mock.patch('pylexa.app.alexa_blueprint')
+        self.blueprint_mock = self.blueprint_patcher.start()
+        self.blueprint_mock.app_id = None
+
+        self.current_app_patcher = mock.patch('pylexa.app.current_app')
+        self.current_app = self.current_app_patcher.start()
+
+        self.verify_request_patcher = mock.patch('pylexa.app.verify_request')
+        self.verify_request = self.verify_request_patcher.start()
+
+    def tearDown(self):
+        self.request_patcher.stop()
+        self.blueprint_patcher.stop()
+        self.current_app_patcher.stop()
+        self.verify_request_patcher.stop()
+
+    def should_call_verify_request_when_not_in_debug_mode(self):
+        self.current_app.debug = False
+        self.blueprint_mock.force_verification = False
+        validate_request()
+        self.verify_request.assert_called_once()
+
+    def should_call_verify_request_when_force_verification_true(self):
+        self.current_app.debug = True
+        self.blueprint_mock.force_verification = True
+        validate_request()
+        self.verify_request.assert_called_once()
+
+    def should_not_verify_request_when_debug_and_no_force_verification(self):
+        self.current_app.debug = True
+        self.blueprint_mock.force_verification = False
+        validate_request()
+        self.assertFalse(self.verify_request.called)
+
+    def should_raise_error_when_app_id_doesnt_match(self):
+        self.blueprint_mock.app_id = 'not_valid'
+        with self.assertRaises(InvalidRequest):
+            validate_request()
+
+    def should_not_raise_error_when_app_id_not_provided(self):
+        self.blueprint_mock.app_id = None
+        try:
+            validate_request()
+        except InvalidRequest:
+            self.fail('InvalidRequest should not have been raised')
+
+    def should_not_raise_error_when_app_id_matches(self):
+        self.blueprint_mock.app_id = self.app_id
+        try:
+            validate_request()
+        except InvalidRequest:
+            self.fail('InvalidRequest should not have been raised')
+
+
 class TestRouteRequest(unittest.TestCase):
 
     def setUp(self):
@@ -99,39 +169,10 @@ class TestRouteRequest(unittest.TestCase):
         self.intents_patcher = mock.patch('pylexa.app.intents', new=self.intents)
         self.intents_patcher.start()
 
-        self.current_app_patcher = mock.patch('pylexa.app.current_app')
-        self.current_app = self.current_app_patcher.start()
-
-        self.verify_request_patcher = mock.patch('pylexa.app.verify_request')
-        self.verify_request = self.verify_request_patcher.start()
-
     def tearDown(self):
         self.make_request_obj_patcher.stop()
         self.blueprint_patcher.stop()
         self.intents_patcher.stop()
-        self.current_app_patcher.stop()
-        self.verify_request_patcher.stop()
-
-    def should_call_verify_request_when_not_in_debug_mode(self):
-        self.current_app.debug = False
-        self.blueprint_mock.force_verification = False
-        self.request.is_launch = True
-        route_request()
-        self.verify_request.assert_called_once()
-
-    def should_call_verify_request_when_force_verification_true(self):
-        self.current_app.debug = True
-        self.blueprint_mock.force_verification = True
-        self.request.is_launch = True
-        route_request()
-        self.verify_request.assert_called_once()
-
-    def should_not_verify_request_when_debug_and_no_force_verification(self):
-        self.current_app.debug = True
-        self.blueprint_mock.force_verification = False
-        self.request.is_launch = True
-        route_request()
-        self.assertFalse(self.verify_request.called)
 
     def should_call_launch_handler_for_launch_request(self):
         self.request.is_launch = True
