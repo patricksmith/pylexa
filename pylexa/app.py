@@ -17,6 +17,7 @@ alexa_blueprint = Blueprint('alexa', __name__)
 alexa_blueprint.launch_handler = default_launch_handler
 alexa_blueprint.session_ended_handler = default_session_ended_handler
 alexa_blueprint.force_verification = False
+alexa_blueprint.app_id = None
 
 
 def make_request_obj():
@@ -47,11 +48,21 @@ def handle_invalid_request(error):
     return response
 
 
-@alexa_blueprint.route('/', methods=['POST'])
-def route_request():
+@alexa_blueprint.before_request
+def validate_request():
     if not current_app.debug or alexa_blueprint.force_verification:
         verify_request()
 
+    app_id = alexa_blueprint.app_id
+    incoming_app_id = flask_request.json.get(
+        'session', {}).get('application', {}).get('applicationId')
+
+    if app_id and incoming_app_id != app_id:
+        raise InvalidRequest('Request contains incorrect applicationId')
+
+
+@alexa_blueprint.route('/', methods=['POST'])
+def route_request():
     request = make_request_obj()
     if request.is_intent:
         if request.intent in intents:
