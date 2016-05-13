@@ -1,12 +1,14 @@
-import os
 from setuptools import setup
 
-def read(fname):
-    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+try:
+    import pypandoc
+    long_description = pypandoc.convert('README.md', 'rst')
+except(IOError, ImportError):
+    long_description = open('README.md').read()
 
 setup(
     name = 'pylexa',
-    version = '0.0.10',
+    version = '0.0.13',
     author = 'Patrick Smith',
     author_email = 'pjs482@gmail.com',
     description = ('A library to ease creation of an Alexa Skills Kit'),
@@ -14,7 +16,7 @@ setup(
     url = 'http://www.github.com/patricksmith/pylexa',
     packages=['pylexa'],
     install_requires=['flask', 'python-dateutil', 'pycrypto', 'pyopenssl'],
-    long_description=read('README.md'),
+    long_description=long_description,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Topic :: Utilities',

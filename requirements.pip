@@ -1,6 +1,9 @@
 flask
-mock
-nose
 pycrypto
 pyopenssl
 python-dateutil
+
+# development requirements
+mock
+nose
+pypandoc

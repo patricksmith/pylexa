@@ -11,24 +11,24 @@
 
 Let's say you want to define an Alexa Skill that echoes whatever the user says. So far, you've:
 
-* created a skill in the [Amazon Developer Console](https://developer.amazon.com/edw/home.html#/skills/list)
-* Added a `Echo` intent with a single slot, `message`:
+  * created a skill in the [Amazon Developer Console](https://developer.amazon.com/edw/home.html#/skills/list)
+  * Added a `Echo` intent with a single slot, `message`:
 
-  ```javascript
-  {
+    ```javascript
+    {
       "intent": "Echo",
       "slots": [
-          {
-            "name": "message",
-            "type": "AMAZON.LITERAL"
-          }
+        {
+          "name": "message",
+          "type": "AMAZON.LITERAL"
+        }
       ]
-   }
-   ```
+    }
+    ```
 
-* Added an utterance to allow users to interact with the skill:
+  * Added an utterance to allow users to interact with the skill:
 
-  `Echo echo { something | message }`
+    `Echo echo { something | message }`
 
 Now, you're ready to create a server that will accept the request and return a response echoing the input. Using `pylexa`, we'd need only the following code to accomplish this:
 
