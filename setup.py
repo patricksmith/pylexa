@@ -8,7 +8,7 @@ except(IOError, ImportError):
 
 setup(
     name = 'pylexa',
-    version = '0.0.13',
+    version = '0.0.14',
     author = 'Patrick Smith',
     author_email = 'pjs482@gmail.com',
     description = ('A library to ease creation of an Alexa Skills Kit'),
