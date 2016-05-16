@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import find_packages, setup
 
 try:
     import pypandoc
@@ -14,11 +14,17 @@ setup(
     description = ('A library to ease creation of an Alexa Skills Kit'),
     keywords = 'amazon alexa ask',
     url = 'http://www.github.com/patricksmith/pylexa',
-    packages=['pylexa'],
-    install_requires=['flask', 'python-dateutil', 'pycrypto', 'pyopenssl'],
+    packages=find_packages(),
+    install_requires=[
+        'flask', 'python-dateutil', 'pycrypto', 'pyopenssl', 'pyyaml'],
     long_description=long_description,
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Topic :: Utilities',
     ],
+    entry_points={
+        'console_scripts': [
+            'generate-alexa-conf = pylexa.tools.parse_conf:main',
+        ]
+    },
 )

@@ -57,3 +57,71 @@ And that's it! You can push the above code, configure the skill to point to the 
 ## Testing
 
 After installing requirements with `pip install -r requirements.pip`, tests can be run with `nosetests`.
+
+
+## Alexa Configuration
+
+Configuration of an Alexa Skill is done in three parts in the developer console:
+
+* the intent schema
+* list of utterances
+* custom slot definitions
+
+`pylexa` comes with a command line tool that aims to simplify this configuration by allowing one to define a YAML file with the necessary information and generate the intent schema, utterances, and custom slots from that.
+
+For example, let's say you had the following YAML schema defined:
+
+```yaml
+intents:
+    - TestIntent:
+        foo: AMAZON.NUMBER
+        bar: CUSTOM_SLOT
+    - OtherIntent
+    - AMAZON.YesIntent
+
+utterances:
+    TestIntent:
+        - 'do something with {foo} and {bar}'
+        - '{foo} {bar}'
+    OtherIntent:
+        - 'do something else'
+
+slots:
+    CUSTOM_SLOT:
+        - value 1
+        - value 2
+```
+
+This defines a skill that handles three intents (`TestIntent`, `OtherIntent`, and `AMAZON.YesIntent`), specifies utterances for `TestIntent` and `OtherIntent`, and contains a custom slot definition.
+
+If we have that YAML definition in `conf/schema.yml`:
+
+```bash
+$ tree conf
+conf
+└── schema.yml
+
+0 directories, 1 file
+```
+
+We can then run the command line tool `generate-alexa-conf` to create the requisite files:
+
+```bash
+$ generate-alexa-conf conf/schema.yml
+```
+
+We now have the intent schema, utterances, and slots defined in their own files:
+
+```bash
+$ tree conf
+conf
+├── intent_schema.json
+├── schema.yml
+├── slots
+│   ├── CUSTOM_SLOT
+└── utterances.txt
+
+1 directory, 4 files
+```
+
+The contents of each file can then be copied + pasted in to the appropriate sections of the Alexa Skill configuration.
