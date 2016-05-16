@@ -2,6 +2,7 @@ flask
 pycrypto
 pyopenssl
 python-dateutil
+pyyaml
 
 # development requirements
 mock
