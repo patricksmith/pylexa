@@ -38,18 +38,20 @@ class LaunchRequest(Request):
 class IntentRequest(Request):
 
     is_intent = True
+    slots = {}
+
+    def __init__(self, request):
+        super(IntentRequest, self).__init__(request)
+
+        request_slots = self.request.get('intent', {}).get('slots', {})
+        self.slots = {
+            slot['name']: slot['value']
+            for slot in request_slots.values() if 'value' in slot
+        }
 
     @property
     def intent(self):
         return self.request.get('intent', {}).get('name')
-
-    @property
-    def slots(self):
-        slots = self.request.get('intent', {}).get('slots', {})
-        return {
-            slot['name']: slot['value']
-            for slot in slots.values() if 'value' in slot
-        }
 
 
 class SessionEndedRequest(Request):
