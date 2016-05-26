@@ -10,7 +10,7 @@
 Let's say you want to define an Alexa Skill that echoes whatever the user says. So far, you've:
 
   * created a skill in the [Amazon Developer Console](https://developer.amazon.com/edw/home.html#/skills/list)
-  * Added a `Echo` intent with a single slot, `message`:
+  * Added an `Echo` intent with a single slot, `message`:
 
     ```javascript
     {
