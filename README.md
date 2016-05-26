@@ -1,7 +1,5 @@
 # `pylexa`
 
-*NOTE: This library is NOT ready for production use yet!*
-
 `pylexa` is a library that aims to ease development of an [Alexa Skills Kits](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit).
 
 `pylexa` allows one to define a simple Flask application that will be able to accept requests and return appropriate responses to the Alexa service.
