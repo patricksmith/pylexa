@@ -37,7 +37,7 @@ class TestParseYaml(unittest.TestCase):
 
         with tempfile.NamedTemporaryFile(dir=cls.tempdir, delete=False) as f:
             schema_filename = f.name
-            f.write(cls.YAML)
+            f.write(cls.YAML.encode())
 
         parse_yaml(schema_filename)
 
@@ -55,11 +55,11 @@ class TestParseYaml(unittest.TestCase):
             'intents': [{
                 'intent': 'TestIntent',
                 'slots': [{
-                    'name': 'foo',
-                    'type': 'AMAZON.NUMBER'
-                },{
                     'name': 'bar',
                     'type': 'CUSTOM_SLOT'
+                },{
+                    'name': 'foo',
+                    'type': 'AMAZON.NUMBER'
                 }]
             }, {
                 'intent': 'OtherIntent',
