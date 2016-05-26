@@ -3,6 +3,7 @@ pycrypto
 pyopenssl
 python-dateutil
 pyyaml
+requests
 
 # development requirements
 mock

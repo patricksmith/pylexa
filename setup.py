@@ -16,7 +16,7 @@ setup(
     url = 'http://www.github.com/patricksmith/pylexa',
     packages=find_packages(),
     install_requires=[
-        'flask', 'python-dateutil', 'pycrypto', 'pyopenssl', 'pyyaml'],
+        'flask', 'python-dateutil', 'pycrypto', 'pyopenssl', 'pyyaml', 'requests'],
     long_description=long_description,
     classifiers=[
         'Development Status :: 3 - Alpha',
