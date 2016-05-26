@@ -104,7 +104,7 @@ class TestVerifySignature(unittest.TestCase):
         result = verify_signature(signature, Mock(), request_body)
 
         verifier.verify.assert_called_once_with(
-            sha.new(request_body), base64.decodestring(signature))
+            sha.new(request_body), base64.decodestring(signature.encode()))
         self.assertEqual(result, verifier.verify.return_value)
 
 

@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from app_for_testing import app
+from tests.integration.app_for_testing import app
 
 
 EXAMPLE_REQUEST = {

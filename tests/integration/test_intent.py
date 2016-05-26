@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from app_for_testing import app
+from tests.integration.app_for_testing import app
 
 
 def make_echo_request(slot_value=None):
@@ -47,7 +47,7 @@ class TestEchoIntentWithoutValue(unittest.TestCase):
                 data=json.dumps(make_echo_request()),
                 headers={'content-type': 'application/json'}
             )
-            self.assertEqual(json.loads(rv.get_data()), {
+            self.assertEqual(json.loads(rv.get_data(as_text=True)), {
                 'version': '1.0',
                 'response': {
                     'outputSpeech': {
@@ -69,7 +69,7 @@ class TestEchoIntentWithValue(unittest.TestCase):
                 data=json.dumps(make_echo_request('echo me')),
                 headers={'content-type': 'application/json'}
             )
-            self.assertEqual(json.loads(rv.get_data()), {
+            self.assertEqual(json.loads(rv.get_data(as_text=True)), {
                 'version': '1.0',
                 'response': {
                     'outputSpeech': {
@@ -116,7 +116,7 @@ class TestAuthIntent(unittest.TestCase):
                 data=json.dumps(EXAMPLE_REQUIRES_AUTH_REQUEST),
                 headers={'content-type': 'application/json'}
             )
-            self.assertEqual(json.loads(rv.get_data()), {
+            self.assertEqual(json.loads(rv.get_data(as_text=True)), {
                 'version': '1.0',
                 'response': {
                     'outputSpeech': {
