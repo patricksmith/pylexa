@@ -1,5 +1,7 @@
 # `pylexa`
 
+[![Build Status](https://travis-ci.org/patricksmith/pylexa.svg?branch=master)](https://travis-ci.org/patricksmith/pylexa)
+
 `pylexa` is a library that aims to ease development of an [Alexa Skills Kits](https://developer.amazon.com/public/solutions/alexa/alexa-skills-kit).
 
 `pylexa` allows one to define a simple Flask application that will be able to accept requests and return appropriate responses to the Alexa service.
