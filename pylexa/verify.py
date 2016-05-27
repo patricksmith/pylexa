@@ -1,5 +1,8 @@
 from datetime import datetime, timedelta
-from urlparse import urlparse
+try:
+    from urlparse import urlparse
+except ImportError:
+    from urllib.parse import urlparse
 import base64
 
 from Crypto.Signature import PKCS1_v1_5
@@ -12,6 +15,10 @@ from OpenSSL import crypto
 import requests
 
 from pylexa.exceptions import InvalidRequest
+
+import sys
+if sys.version_info > (3,):
+    long = int
 
 
 DOWNLOADED_CERTS = {}
@@ -65,7 +72,7 @@ def verify_signature(signature, cert_chain_url, request_body):
     pubkey = get_pubkey_from_cert(cert_chain_url)
     verifier = get_verifier(pubkey)
 
-    decoded_signature = base64.decodestring(signature)
+    decoded_signature = base64.decodestring(signature.encode())
 
     request_hash = SHA.new(request_body)
     return verifier.verify(request_hash, decoded_signature)

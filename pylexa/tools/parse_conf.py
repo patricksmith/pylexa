@@ -35,7 +35,7 @@ def format_intents(intents):
                 'slots': [{
                     'name': slot_name,
                     'type': slot_type
-                } for slot_name, slot_type in slots.iteritems()]
+                } for slot_name, slot_type in sorted(slots.items())]
             }
 
 
@@ -49,7 +49,7 @@ def write_intents(intents, filename):
 def write_slots(slots, dirname):
     if not os.path.exists(dirname):
         os.mkdir(dirname)
-    for name, values in slots.iteritems():
+    for name, values in slots.items():
         with open(os.path.join(dirname, name), 'w') as f:
             f.write('\n'.join(values))
 
@@ -57,7 +57,7 @@ def write_slots(slots, dirname):
 def format_utterances(utterances):
     return '\n'.join([
         '{} {}'.format(intent, line)
-        for intent, lines in sorted(utterances.iteritems())
+        for intent, lines in sorted(utterances.items())
         for line in lines
     ])
 

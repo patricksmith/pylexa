@@ -43,7 +43,7 @@ def handle_session_ended_request(func):
 
 @alexa_blueprint.errorhandler(InvalidRequest)
 def handle_invalid_request(error):
-    response = jsonify({'error': error.message})
+    response = jsonify({'error': str(error)})
     response.status_code = 400
     return response
 

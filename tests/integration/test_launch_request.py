@@ -1,7 +1,7 @@
 import json
 import unittest
 
-from app_for_testing import app
+from tests.integration.app_for_testing import app
 
 
 EXAMPLE_REQUEST = {
@@ -34,7 +34,7 @@ class TestLaunchRequest(unittest.TestCase):
                 data=json.dumps(EXAMPLE_REQUEST),
                 headers={'content-type': 'application/json'}
             )
-            self.assertEqual(json.loads(rv.get_data()), {
+            self.assertEqual(json.loads(rv.get_data(as_text=True)), {
                 'version': '1.0',
                 'response': {
                     'outputSpeech': {
