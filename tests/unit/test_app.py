@@ -102,10 +102,10 @@ class TestValidateRequest(unittest.TestCase):
 
         self.blueprint_patcher = mock.patch('pylexa.app.alexa_blueprint')
         self.blueprint_mock = self.blueprint_patcher.start()
-        self.blueprint_mock.app_id = None
 
         self.current_app_patcher = mock.patch('pylexa.app.current_app')
         self.current_app = self.current_app_patcher.start()
+        self.current_app.config = {}
 
         self.verify_request_patcher = mock.patch('pylexa.app.verify_request')
         self.verify_request = self.verify_request_patcher.start()
@@ -118,36 +118,36 @@ class TestValidateRequest(unittest.TestCase):
 
     def should_call_verify_request_when_not_in_debug_mode(self):
         self.current_app.debug = False
-        self.blueprint_mock.force_verification = False
+        self.current_app.config['force_verification'] = False
         validate_request()
         self.verify_request.assert_called_once_with()
 
     def should_call_verify_request_when_force_verification_true(self):
         self.current_app.debug = True
-        self.blueprint_mock.force_verification = True
+        self.current_app.config['force_verification'] = True
         validate_request()
         self.verify_request.assert_called_once_with()
 
     def should_not_verify_request_when_debug_and_no_force_verification(self):
         self.current_app.debug = True
-        self.blueprint_mock.force_verification = False
+        self.current_app.config['force_verification'] = False
         validate_request()
         self.assertFalse(self.verify_request.called)
 
     def should_raise_error_when_app_id_doesnt_match(self):
-        self.blueprint_mock.app_id = 'not_valid'
+        self.current_app.config['app_id'] = 'not_valid'
         with self.assertRaises(InvalidRequest):
             validate_request()
 
     def should_not_raise_error_when_app_id_not_provided(self):
-        self.blueprint_mock.app_id = None
+        self.current_app.config = {}
         try:
             validate_request()
         except InvalidRequest:
             self.fail('InvalidRequest should not have been raised')
 
     def should_not_raise_error_when_app_id_matches(self):
-        self.blueprint_mock.app_id = self.app_id
+        self.current_app.config['app_id'] = self.app_id
         try:
             validate_request()
         except InvalidRequest:

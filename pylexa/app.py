@@ -1,23 +1,13 @@
 # -*- coding: utf-8 -*-
-from flask import Blueprint, current_app, jsonify, request as flask_request
+from flask import current_app, jsonify, request as flask_request
 
-from pylexa.default_handlers import (
-    default_launch_handler,
-    default_session_ended_handler,
-    default_unrecognized_intent_handler
-)
+from pylexa.blueprint import alexa_blueprint
+from pylexa.default_handlers import default_unrecognized_intent_handler
 from pylexa.exceptions import InvalidRequest
 from pylexa.intent import intents
 from pylexa.request import IntentRequest, LaunchRequest, SessionEndedRequest, Request
 from pylexa.response import PlainTextSpeech
 from pylexa.verify import verify_request
-
-
-alexa_blueprint = Blueprint('alexa', __name__)
-alexa_blueprint.launch_handler = default_launch_handler
-alexa_blueprint.session_ended_handler = default_session_ended_handler
-alexa_blueprint.force_verification = False
-alexa_blueprint.app_id = None
 
 
 def make_request_obj():
@@ -50,10 +40,10 @@ def handle_invalid_request(error):
 
 @alexa_blueprint.before_request
 def validate_request():
-    if not current_app.debug or alexa_blueprint.force_verification:
+    if not current_app.debug or current_app.config.get('force_verification'):
         verify_request()
 
-    app_id = alexa_blueprint.app_id
+    app_id = current_app.config.get('app_id')
     incoming_app_id = flask_request.json.get(
         'session', {}).get('application', {}).get('applicationId')
 
