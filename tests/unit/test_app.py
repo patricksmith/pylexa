@@ -118,19 +118,19 @@ class TestValidateRequest(unittest.TestCase):
 
     def should_call_verify_request_when_not_in_debug_mode(self):
         self.current_app.debug = False
-        self.blueprint_mock.force_verification = False
+        self.current_app.config['force_verification'] = False
         validate_request()
         self.verify_request.assert_called_once_with()
 
     def should_call_verify_request_when_force_verification_true(self):
         self.current_app.debug = True
-        self.blueprint_mock.force_verification = True
+        self.current_app.config['force_verification'] = True
         validate_request()
         self.verify_request.assert_called_once_with()
 
     def should_not_verify_request_when_debug_and_no_force_verification(self):
         self.current_app.debug = True
-        self.blueprint_mock.force_verification = False
+        self.current_app.config['force_verification'] = False
         validate_request()
         self.assertFalse(self.verify_request.called)
 

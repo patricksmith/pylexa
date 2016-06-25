@@ -16,7 +16,6 @@ from pylexa.verify import verify_request
 alexa_blueprint = Blueprint('alexa', __name__)
 alexa_blueprint.launch_handler = default_launch_handler
 alexa_blueprint.session_ended_handler = default_session_ended_handler
-alexa_blueprint.force_verification = False
 
 
 def make_request_obj():
@@ -49,7 +48,7 @@ def handle_invalid_request(error):
 
 @alexa_blueprint.before_request
 def validate_request():
-    if not current_app.debug or alexa_blueprint.force_verification:
+    if not current_app.debug or current_app.config.get('force_verification'):
         verify_request()
 
     app_id = current_app.config.get('app_id')
