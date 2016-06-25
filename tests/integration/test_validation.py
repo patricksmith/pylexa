@@ -48,11 +48,11 @@ class TestRequestForDifferentApplication(unittest.TestCase):
 
     def setUp(self):
         self.blueprint = app.blueprints['alexa']
-        self.old_app_id = self.blueprint.app_id
-        self.blueprint.app_id = 'incorrect_app_id'
+        self.old_app_id = app.config.get('app_id')
+        app.config['app_id'] = 'incorrect_app_id'
 
     def tearDown(self):
-        self.blueprint.app_id = self.old_app_id
+        app.config['app_id'] = self.old_app_id
 
     def should_return_400_status_code(self):
         with app.test_client() as client:

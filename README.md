@@ -41,7 +41,7 @@ from pylexa.response import AlexaResponseWrapper, PlainTextSpeech
 
 
 app = Flask(__name__)
-alexa_blueprint.app_id = 'my_app_id'
+app.config['app_id'] = 'amzn1.echo-sdk-ams.app.my_app_id'
 app.register_blueprint(alexa_blueprint)
 app.response_class = AlexaResponseWrapper
 
